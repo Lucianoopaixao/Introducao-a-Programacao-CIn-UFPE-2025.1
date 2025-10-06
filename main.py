@@ -1,0 +1,696 @@
+import sys
+import pygame
+import random
+import os
+from collections import Counter
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+pygame.init()
+pygame.mixer.init()
+
+def tela_como_jogar(tela):
+    fonte = pygame.font.SysFont(None, 30)
+    botao_voltar = pygame.Rect(10, 10, 20, 20)
+    cor_botao = (200, 200, 200)
+    cor_botao_hover = (150, 150, 150)
+    cor_texto = (0, 0, 0)
+    relogio = pygame.time.Clock()
+    rodando = True
+
+    while rodando:
+        pos_mouse = pygame.mouse.get_pos()
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                if botao_voltar.collidepoint(pos_mouse):
+                    rodando = False
+
+        tela.fill((255, 255, 255))  
+
+        
+        imagem_como_jogar = pygame.image.load("assets/como_jogar.png")
+        imagem_como_jogar = pygame.transform.scale(imagem_como_jogar, (800, 600))  
+
+
+        tela.blit(imagem_como_jogar, (0, 0))
+
+
+        # Botão Voltar
+        cor_atual = cor_botao_hover if botao_voltar.collidepoint(pos_mouse) else cor_botao
+        pygame.draw.rect(tela, cor_atual, botao_voltar, border_radius=8)
+        texto_botao = fonte.render("<", True, cor_texto)
+        tela.blit(texto_botao, texto_botao.get_rect(center=botao_voltar.center))
+
+        pygame.display.flip()
+        relogio.tick(60)
+
+
+def tela_historia(tela):
+    fonte = pygame.font.SysFont(None, 30)
+    botao_voltar = pygame.Rect(10, 10, 20, 20)
+    cor_botao = (200, 200, 200)
+    cor_botao_hover = (150, 150, 150)
+    cor_texto = (0, 0, 0)
+    relogio = pygame.time.Clock()
+    rodando = True
+
+    while rodando:
+        pos_mouse = pygame.mouse.get_pos()
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                if botao_voltar.collidepoint(pos_mouse):
+                    rodando = False
+
+        tela.fill((255, 255, 255))  
+
+        imagem_historia = pygame.image.load("assets/historia.png")
+        imagem_historia = pygame.transform.scale(imagem_historia, (900, 550))
+        tela.blit(imagem_historia, (-100, 20))
+
+
+        # Botão Voltar
+        cor_atual = cor_botao_hover if botao_voltar.collidepoint(pos_mouse) else cor_botao
+        pygame.draw.rect(tela, cor_atual, botao_voltar, border_radius=8)
+        texto_botao = fonte.render("<", True, cor_texto)
+        tela.blit(texto_botao, texto_botao.get_rect(center=botao_voltar.center))
+
+        pygame.display.flip()
+        relogio.tick(60)
+
+
+def tela_inicial():
+    pygame.init()
+
+    LARGURA, ALTURA = 800, 600
+    tela = pygame.display.set_mode((LARGURA, ALTURA))
+    pygame.display.set_caption("Labirinto - Tela Inicial")
+
+    # Cores e fontes
+    COR_TEXTO = (0, 0, 0)  # Preto para o texto dos botões
+    COR_BOTAO = (255, 182, 193)       # Rosa claro
+    COR_BOTAO_HOVER = (255, 105, 180) # Rosa mais forte
+    COR_BOTAO_AZUL = (173, 216, 230)  # Azul claro
+    COR_BOTAO_AZUL_HOVER = (100, 149, 237) # Azul mais forte
+    COR_SOMBRA = (200, 100, 130)      # Sombra rosa
+    COR_SOMBRA_AZUL = (90, 120, 170)  # Sombra azul
+
+    fonte_botao = pygame.font.SysFont(None, 30, bold=True)
+
+    # Fundo e personagens
+    fundo = pygame.transform.scale(pygame.image.load("assets/floresta_doceP.png"), (LARGURA, ALTURA))
+    princesa = pygame.transform.scale(pygame.image.load("assets/princesa_jujubaP.png"), (300, 450))
+    rei = pygame.transform.scale(pygame.image.load("assets/rei_geladoP.png"), (300, 500))
+
+    # Botões
+    botoes = [
+        {"texto": "JOGAR", "rect": pygame.Rect(LARGURA//2 - 100, 300, 200, 60), "cor": COR_BOTAO, "hover": COR_BOTAO_HOVER, "sombra": COR_SOMBRA},
+        {"texto": "HISTÓRIA", "rect": pygame.Rect(LARGURA//2 - 100, 380, 200, 60), "cor": COR_BOTAO_AZUL, "hover": COR_BOTAO_AZUL_HOVER, "sombra": COR_SOMBRA_AZUL},
+        {"texto": "COMO JOGAR", "rect": pygame.Rect(LARGURA//2 - 100, 460, 200, 60), "cor": COR_BOTAO, "hover": COR_BOTAO_HOVER, "sombra": COR_SOMBRA},
+    ]
+    
+    relogio = pygame.time.Clock()
+
+    while True:
+        pos_mouse = pygame.mouse.get_pos()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                for botao in botoes:
+                    if botao["rect"].collidepoint(pos_mouse):
+                        if botao["texto"] == "JOGAR":
+                            return  # Sai da tela inicial e inicia jogo
+                        elif botao["texto"] == "HISTÓRIA":
+                            tela_historia(tela)
+                        elif botao["texto"] == "COMO JOGAR":
+                            tela_como_jogar(tela)
+
+        tela.blit(fundo, (0, 0))
+        tela.blit(princesa, (10, ALTURA//2 - 150))
+        tela.blit(rei, (LARGURA - 300, ALTURA//2 - 150))
+
+        titulo_img = pygame.image.load("assets/fonte.png")
+        titulo_img_pequena = pygame.transform.scale(titulo_img, (350, 300)) 
+
+        tela.blit(titulo_img_pequena, (LARGURA//2 - titulo_img_pequena.get_width()//2, -10))
+
+        # Desenha botões
+        for botao in botoes:
+            cor = botao["hover"] if botao["rect"].collidepoint(pos_mouse) else botao["cor"]
+            sombra_rect = botao["rect"].copy()
+            sombra_rect.move_ip(4, 4)
+            pygame.draw.rect(tela, botao["sombra"], sombra_rect, border_radius=12)
+            pygame.draw.rect(tela, cor, botao["rect"], border_radius=12)
+            texto_botao = fonte_botao.render(botao["texto"], True, COR_TEXTO)
+            tela.blit(texto_botao, texto_botao.get_rect(center=botao["rect"].center))
+
+        pygame.display.flip()
+        relogio.tick(60)
+
+
+# Ponto de partida do jogo
+def iniciar_jogo():
+    tela_inicial()
+
+    LARGURA_TELA = 1200
+    ALTURA_TELA = 800
+    TELA = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+    pygame.display.set_caption("Royal Rush")
+
+# Chamando o jogo
+iniciar_jogo()
+
+LARGURA_TELA = 1200
+ALTURA_TELA = 800
+TELA = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+pygame.display.set_caption("Royal Rush")
+
+BRANCO = (255, 255, 255)
+AZUL = (0, 0, 255)
+VERMELHO = (255, 0, 0)
+PRETO = (0, 0, 0)
+COR_CAMINHO = (0, 100, 0)
+
+MAPEAMENTO_PAREDES = {
+    'C': 'coluna',
+    'L': 'linha',
+    'D': 'coluna_direita',
+    'E': 'coluna_esquerda',
+    'I': 'intersecao',
+    'B': 'linha_baixo',
+    'U': 'linha_cima',
+    'W': 'cima_esquerda',
+    'X': 'cima_direita',
+    'Y': 'baixo_esquerda',
+    'Z': 'baixo_direita'
+}
+
+LABIRINTO_STR = [
+    "ZLLLLLBLLLLLLLBLLLLLLLBLLLLLLLLLY",
+    "C     C       C       C         C",
+    "C ZLL C LLLLY C ZLY LLULY LLLLY C",
+    "C C   C     C   C C     C     C C",
+    "C C LLULY C XLLLE C ZLL C LLY C C",
+    "C C     C C     C   C   C   C   C",
+    "C XLLLY C DLL C XLLLE LLULY XLL C",
+    "C     C   C   C     C     C     C",
+    "DLLLY XLL C LLILLLL C LLLLULLLY C",
+    "C   C     C   C     C         C C",
+    "C C XLLLLLW C C ZLLLULLLLLY C C C",
+    "C C         C   C         C C   C",
+    "C XLL LLLLLLW C C ZLLLLLL C XLL C",
+    "C             C   C             C",
+    "XLLLLLLLLLLLLLULLLULLLLLLLLLLLLLW",
+]
+LABIRINTO = [list(linha) for linha in LABIRINTO_STR]
+
+TAMANHO_CELULA = min(LARGURA_TELA // len(LABIRINTO[0]), ALTURA_TELA // len(LABIRINTO))
+
+LARGURA_LABIRINTO = len(LABIRINTO[0]) * TAMANHO_CELULA
+ALTURA_LABIRINTO = len(LABIRINTO) * TAMANHO_CELULA
+
+OFFSET_X = (LARGURA_TELA - LARGURA_LABIRINTO) // 2
+OFFSET_Y = (ALTURA_TELA - ALTURA_LABIRINTO) // 2
+
+
+CAMINHO_IMAGENS = "assets"
+
+#inicialização e ajustes da musica e sons de coleta
+pygame.mixer.music.load(os.path.join(CAMINHO_IMAGENS, 'musica.wav'))
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(-1)
+somdecoleta=pygame.mixer.Sound(os.path.join(CAMINHO_IMAGENS, 'somdagema.mp3'))
+somdogunter=pygame.mixer.Sound(os.path.join(CAMINHO_IMAGENS, 'gunter.mp3'))
+reiganhou=pygame.mixer.Sound(os.path.join(CAMINHO_IMAGENS, 'reiganhou.mp3'))
+princesaganhou=pygame.mixer.Sound(os.path.join(CAMINHO_IMAGENS, 'princesa ganhou.mp3'))
+
+#fundo 
+FUNDO = pygame.transform.scale(
+    pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'fundo.jpg')),
+    (LARGURA_TELA, ALTURA_TELA)
+)
+
+IMAGENS = {
+    # Imagens da princesa
+    'princesa': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'princesa4.png')), (TAMANHO_CELULA, TAMANHO_CELULA)), # Imagem padrão
+    'princesa_D': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'princesaD11.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'princesa_E': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'princesaE1.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'princesa_BC': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'princesaBC2.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+
+    # Imagens do Rei Gelado
+    'rei': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'rei11.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'rei_D': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'reiD111.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'rei_E': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'reiE111.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'rei_BC': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'reiC.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+
+    # Outras imagens
+    'gunter': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'gunter5.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'litch': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'Litch.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'mentinha': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'mentol.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'gema': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'gema22.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'arvore': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'arvore.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'arbusto': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'abustoo.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'arvore_rosa': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'arvore_rosa.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),'coluna': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_coluna.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'linha': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_linha.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'coluna_direita': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_coluna_direita.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'coluna_esquerda': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_coluna_esquerda.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'intersecao': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_intersecao.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'linha_baixo': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_linha_baixo.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'linha_cima': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_linha_cima.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'cima_esquerda': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_cima_esquerda.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'cima_direita': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_cima_direita.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'baixo_esquerda': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_baixo_esquerda.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'baixo_direita': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'labirinto_baixo_direita.png')), (TAMANHO_CELULA, TAMANHO_CELULA)),
+    'vitoria_princesa_gemas': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'vitoriagemas.png')), (LARGURA_TELA, ALTURA_TELA)),
+    'vitoria_princesa_tempo': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'vitoriatempo.png')), (LARGURA_TELA, ALTURA_TELA)),
+    'vitoria_rei_gelado': pygame.transform.scale(pygame.image.load(os.path.join(CAMINHO_IMAGENS, 'vitoriarei.png')), (LARGURA_TELA, ALTURA_TELA))
+
+    
+}
+
+
+
+VELOCIDADE_PADRAO = 150
+VELOCIDADE_ACELERADA = 50
+VELOCIDADE_DESACELERADA = 250
+DURACAO_EFEITO = 5000  
+
+def formatar_itens(contador):
+    return " ".join([f"{item.replace('_', ' ').capitalize()}: {qtd}" for item, qtd in contador.items()])
+
+class Jogador:
+    def __init__(self, x, y, imagem, teclas, tipo):
+        self.x = x
+        self.y = y
+        self.imagem_padrao = imagem 
+        self.imagem_atual = imagem 
+        self.teclas = teclas
+        self.tipo = tipo
+        self.velocidade = VELOCIDADE_PADRAO
+        self.tempo_proximo = 0
+        self.efeito_ate = 0
+        self.congelado_ate = 0
+        self.coletados = []
+
+    def desenhar(self):
+        TELA.blit(self.imagem_atual, (self.x * TAMANHO_CELULA + OFFSET_X, self.y * TAMANHO_CELULA + OFFSET_Y))
+
+    def mover(self, teclas_pressionadas, agora):
+        if agora < self.tempo_proximo:
+            return
+        if self.tipo == 'rei' and agora < self.congelado_ate:
+            # deixa a imagem atual se o jogador estiver congelado
+            return
+
+        dx = dy = 0
+        nova_imagem_key = None # chave para o dicionário de imagens
+
+        if teclas_pressionadas[self.teclas['up']]:
+            dy = -1
+            if self.tipo == 'rei':
+                nova_imagem_key = 'rei_BC'
+            elif self.tipo == 'princesa':
+                nova_imagem_key = 'princesa_BC'
+        elif teclas_pressionadas[self.teclas['down']]:
+            dy = 1
+            if self.tipo == 'rei':
+                nova_imagem_key = 'rei'
+            elif self.tipo == 'princesa':
+                nova_imagem_key = 'princesa'
+        elif teclas_pressionadas[self.teclas['left']]:
+            dx = -1
+            if self.tipo == 'rei':
+                nova_imagem_key = 'rei_E'
+            elif self.tipo == 'princesa':
+                nova_imagem_key = 'princesa_E'
+        elif teclas_pressionadas[self.teclas['right']]:
+            dx = 1
+            if self.tipo == 'rei':
+                nova_imagem_key = 'rei_D'
+            elif self.tipo == 'princesa':
+                nova_imagem_key = 'princesa_D'
+
+        # Se houve movimento, atualize a imagem
+        if nova_imagem_key:
+            self.imagem_atual = IMAGENS[nova_imagem_key]
+        
+        novo_x, novo_y = self.x + dx, self.y + dy
+        if 0 <= novo_y < len(LABIRINTO) and 0 <= novo_x < len(LABIRINTO[0]) and LABIRINTO[novo_y][novo_x] != '#':
+            self.x, self.y = novo_x, novo_y
+            self.tempo_proximo = agora + self.velocidade
+
+
+    def aplicar_efeito(self, tipo_objeto, agora, jogo=None):
+        if tipo_objeto == 'gunter':
+            self.velocidade = VELOCIDADE_ACELERADA
+            self.efeito_ate = agora + DURACAO_EFEITO
+        elif tipo_objeto == 'litch':
+            self.velocidade = VELOCIDADE_DESACELERADA
+            self.efeito_ate = agora + DURACAO_EFEITO
+        elif tipo_objeto == 'mentinha' and self.tipo == 'princesa': #policial fica congelado
+            if jogo:
+                jogo.policia.congelado_ate = agora + DURACAO_EFEITO
+
+    def verificar_efeito(self, agora):
+        if agora > self.efeito_ate:
+            self.velocidade = VELOCIDADE_PADRAO
+
+class ObjetoJogo:
+    TIPOS = ['gunter', 'litch', 'mentinha', 'gema'] #"acelera ladrao" é o objeto que congela o policial
+
+    def __init__(self, x, y, tipo, criado_em):
+        self.x = x
+        self.y = y
+        self.tipo = tipo
+        self.criado_em = criado_em
+
+    def desenhar(self):
+        TELA.blit(IMAGENS[self.tipo], (self.x * TAMANHO_CELULA + OFFSET_X, self.y * TAMANHO_CELULA + OFFSET_Y))
+
+class Jogo:
+    DURACAO_OBJETO = 8000      
+    INTERVALO_NOVO_OBJETO = 4000  
+    TEMPO_PARTIDA = 90 * 1000    #90 segundos
+
+    def __init__(self):
+       
+        
+        self.labirinto = LABIRINTO 
+
+        self.ladrao = Jogador(1, 1, IMAGENS['princesa_E'], 
+            {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d}, 'princesa')
+        self.policia = Jogador(len(LABIRINTO[0]) - 2, len(LABIRINTO) - 2, IMAGENS['rei_E'], 
+            {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT}, 'rei')
+        
+        self.objetos = []
+        self.tempo_ultimo_objeto = 0
+        self.rodando = True
+        self.clock = pygame.time.Clock()
+        self.fps = 60
+        self.decoracoes = []
+        
+        
+        self.gerar_cenario() 
+
+        self.fila_objetos = []
+        self.gerar_fila_objetos()
+        self.tempo_inicio = pygame.time.get_ticks()
+        self.fonte = pygame.font.SysFont(None, 36)
+        self.vencedor = None 
+        self.mensagem_vitoria = ""
+
+
+        self.fila_objetos = []
+        self.gerar_fila_objetos()
+
+        self.tempo_inicio = pygame.time.get_ticks()
+
+        self.fonte = pygame.font.SysFont(None, 36)
+        self.vencedor = None 
+        self.mensagem_vitoria = ""
+
+    def gerar_fila_objetos(self): #aqui podemos manipular a quantidade de vezes que um objeto aparece
+        fila = []
+        fila += ['gema'] * 7
+        fila += ['gunter'] * 2
+        fila += ['litch'] * 2
+        fila += ['mentinha'] * 2
+        random.shuffle(fila)
+        self.fila_objetos = fila
+
+    def encontrar_posicao_aleatoria(self):
+        vazios = []
+        for y, linha in enumerate(self.labirinto):
+            for x, celula in enumerate(linha):
+                if celula == ' ' and not self.tem_objeto_na_posicao(x, y) and (x, y) != (self.ladrao.x, self.ladrao.y) and (x, y) != (self.policia.x, self.policia.y):
+                    vazios.append((x, y))
+        return random.choice(vazios) if vazios else None
+
+    def tem_objeto_na_posicao(self, x, y):
+        for obj in self.objetos:
+            if obj.x == x and obj.y == y:
+                return True
+        return False
+
+    def gerar_objeto(self, agora):
+        if not self.fila_objetos:
+            self.gerar_fila_objetos()
+        if agora - self.tempo_ultimo_objeto >= self.INTERVALO_NOVO_OBJETO:
+            tipo = self.fila_objetos.pop(0)
+            pos = self.encontrar_posicao_aleatoria()
+            if pos:
+                novo_objeto = ObjetoJogo(pos[0], pos[1], tipo, criado_em=agora)
+                self.objetos.append(novo_objeto)
+                self.tempo_ultimo_objeto = agora
+
+    def limpar_objetos_expirados(self, agora):
+        self.objetos = [obj for obj in self.objetos if agora - obj.criado_em < self.DURACAO_OBJETO]
+
+    def desenhar_labirinto(self):
+        TELA.blit(FUNDO, (0, 0))
+        COR_LABIRINTO = (0, 100, 0)
+        espessura_linha = 2
+
+        for y, linha in enumerate(self.labirinto):
+            for x, celula in enumerate(linha):
+                if celula == '#':
+                    # Verifica se tem decoração
+                    decorado = False
+                    for tipo in ['coluna', 'linha', 'coluna_direita', 'coluna_esquerda', 'intersecao', 'linha_baixo', 'linha_cima', 'cima_esquerda', 'cima_direita', 'baixo_esquerda', 'baixo_direita']:
+                        if (x, y, tipo) in self.decoracoes:
+                            imagem = IMAGENS.get(tipo)
+                            if imagem:
+                                TELA.blit(imagem, (x * TAMANHO_CELULA + OFFSET_X, y * TAMANHO_CELULA + OFFSET_Y))
+                            decorado = True
+                            break
+
+                    if not decorado:
+                        
+                        esquerda = x * TAMANHO_CELULA + OFFSET_X
+                        topo = y * TAMANHO_CELULA + OFFSET_Y
+                        direita = esquerda + TAMANHO_CELULA
+                        baixo = topo + TAMANHO_CELULA
+
+                        pygame.draw.line(TELA, COR_LABIRINTO, (esquerda, topo), (direita, topo), espessura_linha)
+                        pygame.draw.line(TELA, COR_LABIRINTO, (direita, topo), (direita, baixo), espessura_linha)
+                        pygame.draw.line(TELA, COR_LABIRINTO, (direita, baixo), (esquerda, baixo), espessura_linha)
+                        pygame.draw.line(TELA, COR_LABIRINTO, (esquerda, baixo), (esquerda, topo), espessura_linha)
+
+
+    def desenhar_objetos(self):
+        for obj in self.objetos:
+            obj.desenhar()
+
+    def desenhar_texto(self, texto, x, y, cor=BRANCO):
+        img_texto = self.fonte.render(texto, True, cor)
+        TELA.blit(img_texto, (x, y))
+
+    def verificar_coletas(self, agora):
+        for jogador in [self.ladrao, self.policia]:
+            for obj in self.objetos[:]:
+                if jogador.x == obj.x and jogador.y == obj.y:
+                    if obj.tipo == 'gema' and jogador.tipo == 'princesa':
+                        somdecoleta.play()
+                        jogador.coletados.append(obj.tipo)
+                        self.objetos.remove(obj)
+                    elif obj.tipo == 'gema' and jogador.tipo == 'rei':
+                        self.objetos.remove(obj)
+                    elif obj.tipo == 'gunter':
+                        somdogunter.play()
+                        jogador.coletados.append(obj.tipo)
+                        jogador.aplicar_efeito(obj.tipo, agora, jogo=self)
+                        self.objetos.remove(obj)
+                    elif obj.tipo == 'litch':
+                        jogador.coletados.append(obj.tipo)
+                        jogador.aplicar_efeito(obj.tipo, agora, jogo=self)
+                        self.objetos.remove(obj)
+                    elif obj.tipo == 'mentinha' and jogador.tipo == 'princesa':
+                        jogador.coletados.append(obj.tipo)
+                        jogador.aplicar_efeito(obj.tipo, agora, jogo=self)
+                        self.objetos.remove(obj)
+                    elif obj.tipo == 'mentinha' and jogador.tipo == 'rei':
+                        self.objetos.remove(obj)
+
+    def mostrar_tela_vitoria(self, imagem_vitoria):
+        self.fontezinha = pygame.font.SysFont('impact', 50)
+        duracao_exibicao = 3000  # tempo em milissegundos (3s)
+        inicio_vitoria = pygame.time.get_ticks()
+        
+        imagem = IMAGENS[imagem_vitoria]
+        
+        while pygame.time.get_ticks() - inicio_vitoria < duracao_exibicao:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            # Desenha somente a imagem de vitória
+            TELA.blit(imagem, (0, 0))
+            
+            pygame.display.flip()
+            self.clock.tick(self.fps)
+
+        return "continuar"
+
+
+    def gerar_cenario(self):
+        self.decoracoes = []  # Limpa as decorações de antes
+
+        linhas = len(self.labirinto)
+        colunas = len(self.labirinto[0])
+
+        for y in range(linhas):
+            for x in range(colunas):
+                if self.labirinto[y][x] in MAPEAMENTO_PAREDES:
+                    celula = self.labirinto[y][x]
+
+                    tipo_imagem = MAPEAMENTO_PAREDES[celula]
+                    self.decoracoes.append((x, y, tipo_imagem))
+                    self.labirinto[y][x] = '#'
+
+
+    def eh_saida(self, x, y):
+        if self.labirinto[y][x] != '#':
+            return False
+
+        linhas = len(self.labirinto)
+        colunas = len(self.labirinto[0])
+
+        if x == 0 or x == colunas - 1 or y == 0 or y == linhas - 1:
+            # Se está na borda e tem um espaço livre ao lado, é saída
+            if (x > 0 and self.labirinto[y][x - 1] == ' ') or \
+            (x < colunas - 1 and self.labirinto[y][x + 1] == ' ') or \
+            (y > 0 and self.labirinto[y - 1][x] == ' ') or \
+            (y < linhas - 1 and self.labirinto[y + 1][x] == ' '):
+                return True
+        return False
+    def desenhar_botao_voltar(self):
+        self.botao_voltar = pygame.Rect(10, 10, 40, 40)
+        # Define as cores verde escuro
+        cor_verde_normal = (0, 100, 0)
+        cor_verde_hover = (0, 70, 0)
+        
+        # Define a cor do botão com base na posição do mouse
+        cor_atual = cor_verde_hover if self.botao_voltar.collidepoint(pygame.mouse.get_pos()) else cor_verde_normal
+        
+        # Desenha o botão
+        pygame.draw.rect(TELA, cor_atual, self.botao_voltar, border_radius=8)
+        
+        # Desenha o texto do botão
+        texto_botao = self.fonte.render("<", True, (255, 255, 255)) # Mudei a cor do texto para branco para ficar visível no fundo escuro
+        TELA.blit(texto_botao, texto_botao.get_rect(center=self.botao_voltar.center))
+
+    def executar_jogo():
+        LARGURA_TELA = 1200
+        ALTURA_TELA = 800
+        TELA = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+        pygame.display.set_caption("Royal Rush")
+
+        jogo = Jogo()
+        jogo.loop_principal()
+
+    
+
+
+
+
+
+    def loop_principal(self):
+        agora = pygame.time.get_ticks()
+        self.gerar_objeto(agora)
+
+        while self.rodando:
+            agora = pygame.time.get_ticks()
+
+            # --- Captura de eventos ---
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                
+
+            # --- Lógica do jogo ---
+            teclas = pygame.key.get_pressed()
+            self.ladrao.verificar_efeito(agora)
+            self.policia.verificar_efeito(agora)
+
+            self.ladrao.mover(teclas, agora)
+            self.policia.mover(teclas, agora)
+
+            self.verificar_coletas(agora)
+            self.limpar_objetos_expirados(agora)
+            self.gerar_objeto(agora)
+
+            tempo_passado = agora - self.tempo_inicio
+            tempo_restante_ms = max(0, self.TEMPO_PARTIDA - tempo_passado)
+
+         
+            if not self.vencedor:
+                # Condição de vitória por gemas
+                if self.ladrao.coletados.count('gema') >= 5:
+                    self.vencedor = 'Princesa'
+                    pygame.mixer.music.stop()
+                    princesaganhou.play()
+                    self.mensagem_vitoria = "A princesa conseguiu coletar as 5 gemas!"
+                    self.rodando = False
+                    self.imagem_vitoria_atual = 'vitoria_princesa_gemas'
+
+                # Condição de vitória por captura
+                elif self.policia.x == self.ladrao.x and self.policia.y == self.ladrao.y:
+                    self.vencedor = 'Rei'
+                    pygame.mixer.music.stop()
+                    reiganhou.play()
+                    self.mensagem_vitoria = "Oh não! O Rei Gelado capturou a Princesa Jujuba!"
+                    self.rodando = False
+                    self.imagem_vitoria_atual = 'vitoria_rei_gelado'
+
+                # Condição de vitória por tempo
+                elif tempo_restante_ms == 0:
+                    self.vencedor = 'Princesa'
+                    pygame.mixer.music.stop()
+                    princesaganhou.play()
+                    self.mensagem_vitoria = "O Rei Gelado não conseguiu capturar a Princesa a tempo!"
+                    self.rodando = False
+                    self.imagem_vitoria_atual = 'vitoria_princesa_tempo'
+            
+            
+            self.desenhar_labirinto()
+            self.desenhar_objetos()
+            self.ladrao.desenhar()
+            self.policia.desenhar()
+
+            # Exibe o tempo restante
+            minutos = tempo_restante_ms // 60000
+            segundos = (tempo_restante_ms % 60000) // 1000
+            tempo_formatado = f"{minutos}:{segundos:02d}"
+            self.desenhar_texto(f"{tempo_formatado}", 930, 25)
+
+            # Exibe o placar
+            cont_ladrao = Counter(self.ladrao.coletados)
+            cont_policia = Counter(self.policia.coletados)
+            texto_ladrao = f"Princesa Jujuba: {formatar_itens(cont_ladrao)}"
+            texto_policia = f"Rei Gelado: {formatar_itens(cont_policia)}"
+
+            COR_TEXTO_VERDE = (0, 100, 0)
+            self.desenhar_texto(texto_ladrao, 10, 65, cor=COR_TEXTO_VERDE)
+            self.desenhar_texto(texto_policia, 10, 90, cor=COR_TEXTO_VERDE)
+
+            
+
+            pygame.display.flip()
+            self.clock.tick(self.fps)
+
+        #exibe a tela e encerra
+        if self.vencedor:
+            print(f"{self.vencedor} venceu!")
+            self.mostrar_tela_vitoria(self.imagem_vitoria_atual)
+
+jogo = Jogo()
+jogo.loop_principal()
